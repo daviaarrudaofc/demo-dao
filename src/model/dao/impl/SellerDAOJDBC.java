@@ -57,17 +57,9 @@ public class SellerDAOJDBC implements SellerDAO {
 	        rs = st.executeQuery(); // executa o SELECT e guarda o resultado em rs
 
 	        if (rs.next()) { // se encontrou algum registro no resultado
-	            Department dep = new Department(); // cria um objeto Department para guardar os dados do departamento
-	            dep.setId(rs.getInt("DepartmentId")); // pega o DepartmentId vindo da tabela seller
-	            dep.setName(rs.getString("DepName")); // pega o nome do departamento usando o apelido DepName
+	            Department dep = instantiateDepartment(rs);
 
-	            Seller obj = new Seller(); // cria um objeto Seller para guardar os dados do vendedor
-	            obj.setId(rs.getInt("Id")); // pega o Id do vendedor
-	            obj.setName(rs.getString("Name")); // pega o Name do vendedor
-	            obj.setEmail(rs.getString("Email")); // pega o Email do vendedor
-	            obj.setBaseSalary(rs.getDouble("BaseSalary")); // pega o salário base do vendedor
-	            obj.setBirthDate(rs.getDate("BirthDate")); // pega a data de nascimento do vendedor
-	            obj.setDepartment(dep); // associa o departamento criado ao vendedor
+	            Seller obj = instantiateSeller(rs, dep);
 
 	            return obj; // retorna o vendedor completo, com departamento
 	        }
@@ -81,6 +73,25 @@ public class SellerDAOJDBC implements SellerDAO {
 	        DB.closeStatement(st); // fecha o PreparedStatement para liberar recurso
 	        DB.closeResultSet(rs); // fecha o ResultSet para liberar recurso
 	    }
+	}
+
+	private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException {
+		Seller obj =new Seller(); // cria um objeto Seller para guardar os dados do vendedor
+        obj.setId(rs.getInt("Id")); // pega o Id do vendedor
+        obj.setName(rs.getString("Name")); // pega o Name do vendedor
+        obj.setEmail(rs.getString("Email")); // pega o Email do vendedor
+        obj.setBaseSalary(rs.getDouble("BaseSalary")); // pega o salário base do vendedor
+        obj.setBirthDate(rs.getDate("BirthDate")); // pega a data de nascimento do vendedor
+        obj.setDepartment(dep); // associa o departamento criado ao vendedor
+        return obj;
+		
+	}
+
+	private Department instantiateDepartment(ResultSet rs) throws SQLException {
+		Department dep = new Department();
+		dep.setId(rs.getInt("DepartmentId"));
+		dep.setName(rs.getString("DepName"));
+		return dep;
 	}
 
 	@Override
